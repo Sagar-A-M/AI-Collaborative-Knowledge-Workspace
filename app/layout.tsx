@@ -20,6 +20,9 @@ export const metadata: Metadata = {
   title: "AI Collaborative Knowledge Workspace",
   description:
     "Next-generation collaborative knowledge base and document intelligence platform for high-velocity teams.",
+  verification: {
+    google: process.env.GOOGLE_SITE_VERIFICATION || "google-site-verification-token",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

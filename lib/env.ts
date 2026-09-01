@@ -9,6 +9,12 @@ const envSchema = z.object({
   AI_PROVIDER: z.enum(["openai", "anthropic", "mock"]).default("mock").optional(),
   OPENAI_API_KEY: z.string().optional(),
   REDIS_URL: z.string().optional(),
+  GOOGLE_CLIENT_ID: z.string().optional(),
+  GOOGLE_CLIENT_SECRET: z.string().optional(),
+  GOOGLE_SITE_VERIFICATION: z.string().optional(),
+  AUTH0_DOMAIN: z.string().optional(),
+  AUTH0_CLIENT_ID: z.string().optional(),
+  AUTH0_CLIENT_SECRET: z.string().optional(),
 });
 
 export type Env = z.infer<typeof envSchema>;
