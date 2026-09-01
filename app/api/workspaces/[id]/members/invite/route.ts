@@ -7,6 +7,7 @@ import { inviteMemberSchema } from "@/lib/validations/member";
 import { successResponse, handleApiError } from "@/lib/api-response";
 import { ConflictError } from "@/lib/errors";
 import { logActivity } from "@/lib/activity";
+import { requireRateLimit } from "@/lib/rate-limit";
 
 interface RouteContext {
   params: Promise<{ id: string }>;
@@ -16,6 +17,14 @@ export async function POST(req: NextRequest, { params }: RouteContext) {
   try {
     const { id } = await params;
     const authContext = await requireWorkspaceAdmin(id);
+
+    // Rate limit: 15 member invites per minute per admin
+    await requireRateLimit(
+      `invite-member:${authContext.user.id}:${id}`,
+      { maxRequests: 15, windowSeconds: 60 },
+      "Invite rate limit reached. Please wait before sending more invitations."
+    );
+
     const body = await req.json();
     const validatedData = inviteMemberSchema.parse(body);
 

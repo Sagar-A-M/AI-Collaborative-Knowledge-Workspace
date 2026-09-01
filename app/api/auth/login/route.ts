@@ -5,11 +5,21 @@ import { setSessionCookie } from "@/lib/auth/session";
 import { signInSchema } from "@/lib/validations/auth";
 import { successResponse, handleApiError } from "@/lib/api-response";
 import { UnauthorizedError } from "@/lib/errors";
+import { requireRateLimit } from "@/lib/rate-limit";
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const validatedData = signInSchema.parse(body);
+
+    const clientIp = req.headers.get("x-forwarded-for") || "unknown-ip";
+
+    // Rate limit: 10 attempts per minute per email / IP
+    await requireRateLimit(
+      `auth-login:${validatedData.email.toLowerCase()}:${clientIp}`,
+      { maxRequests: 10, windowSeconds: 60 },
+      "Too many login attempts. Please wait 60 seconds before trying again."
+    );
 
     const user = await prisma.user.findUnique({
       where: { email: validatedData.email },
