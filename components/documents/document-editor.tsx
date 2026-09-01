@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import { MoveDocumentModal } from "./move-document-modal";
 import { DocumentVersionHistoryDrawer } from "./document-version-history-drawer";
+import { AiAssistantDrawer } from "@/components/ai/ai-assistant-drawer";
 import { formatRelativeTime } from "@/lib/utils";
 import type { ApiResponse } from "@/types/api";
 
@@ -76,6 +77,7 @@ export function DocumentEditor({
   const [isPreviewMode, setIsPreviewMode] = useState(false);
   const [isMoveModalOpen, setIsMoveModalOpen] = useState(false);
   const [isVersionDrawerOpen, setIsVersionDrawerOpen] = useState(false);
+  const [isAiDrawerOpen, setIsAiDrawerOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [lastSavedAt, setLastSavedAt] = useState<string>(initialDocument.updatedAt);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -327,15 +329,13 @@ export function DocumentEditor({
           </button>
 
           {/* AI Assistant button */}
-          {onOpenAiAssistant && (
-            <button
-              onClick={onOpenAiAssistant}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white text-xs font-medium transition-all shadow-md"
-            >
-              <Sparkles className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline">AI Assist</span>
-            </button>
-          )}
+          <button
+            onClick={onOpenAiAssistant || (() => setIsAiDrawerOpen(true))}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white text-xs font-medium transition-all shadow-md cursor-pointer"
+          >
+            <Sparkles className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">AI Assist</span>
+          </button>
 
           {/* Delete action */}
           <button
@@ -438,6 +438,14 @@ export function DocumentEditor({
           setSaveStatus("saved");
           setLastSavedAt(new Date().toISOString());
         }}
+      />
+
+      <AiAssistantDrawer
+        workspaceId={workspaceId}
+        documentId={documentId}
+        documentTitle={title}
+        isOpen={isAiDrawerOpen}
+        onClose={() => setIsAiDrawerOpen(false)}
       />
     </div>
   );
