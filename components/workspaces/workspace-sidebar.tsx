@@ -16,6 +16,7 @@ import {
   Settings,
   Sparkles,
   LogOut,
+  Bot,
 } from "lucide-react";
 
 export function WorkspaceSidebar() {
@@ -57,6 +58,11 @@ export function WorkspaceSidebar() {
           label: "Search",
           href: `/workspaces/${workspaceId}/search`,
           icon: Search,
+        },
+        {
+          label: "AI Assistant",
+          href: `/workspaces/${workspaceId}/ai`,
+          icon: Bot,
         },
         {
           label: "Settings",
