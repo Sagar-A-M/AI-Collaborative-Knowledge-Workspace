@@ -1,13 +1,14 @@
 import type { AiProvider } from "./types";
 
 /**
- * Built-in AI Provider utilizing lightweight NLP and extractive/synthesis heuristics.
+ * Builtin Local AI Provider with extractive heuristics and synthesis.
  * Used when no external API key is provided, or as an offline fallback.
  */
 class BuiltinLocalAiProvider implements AiProvider {
   name = "builtin-engine";
 
-  async generateText(prompt: string): Promise<string> {
+  async generateText(prompt: string, _systemPrompt?: string): Promise<string> {
+    void _systemPrompt;
     // Check if the prompt is asking for a summary
     if (prompt.toLowerCase().includes("summarize") || prompt.toLowerCase().includes("summary")) {
       return this.synthesizeSummary(prompt);
