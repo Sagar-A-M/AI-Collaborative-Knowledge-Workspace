@@ -5,9 +5,19 @@ import { setSessionCookie } from "@/lib/auth/session";
 import { signUpSchema } from "@/lib/validations/auth";
 import { successResponse, handleApiError } from "@/lib/api-response";
 import { ConflictError } from "@/lib/errors";
+import { requireRateLimit } from "@/lib/rate-limit";
 
 export async function POST(req: NextRequest) {
   try {
+    const clientIp = req.headers.get("x-forwarded-for") || "unknown-ip";
+
+    // Rate limit: 5 account creations per 5 minutes per IP
+    await requireRateLimit(
+      `auth-register:${clientIp}`,
+      { maxRequests: 5, windowSeconds: 300 },
+      "Too many registration attempts from this IP. Please try again later."
+    );
+
     const body = await req.json();
     const validatedData = signUpSchema.parse(body);
 
